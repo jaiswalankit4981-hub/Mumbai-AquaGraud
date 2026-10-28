@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mumbai AquaGuard — live hazard map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="/">Mumbai <span>AquaGuard</span></a>
+  <span id="conn" class="c-muted" style="font-size:13px"><i class="live-dot"></i>Live</span>
+  <nav>
+    <a href="/" aria-current="page">Map</a>
+    <a href="/admin.html" id="nav-admin" hidden>Control room</a>
+    <a href="#" id="nav-signout">Sign out</a>
+  </nav>
+</header>
+
+<main class="shell">
+  <section class="panel">
+    <div class="status-strip" id="status-strip">
+      <div><b class="c-critical" id="s-critical">–</b><small>Critical areas</small></div>
+      <div><b class="c-logged" id="s-logged">–</b><small>Waterlogged</small></div>
+      <div><b class="c-warning" id="s-manholes">–</b><small>Open manholes</small></div>
+      <div><b class="c-normal" id="s-clear">–</b><small>Running clear</small></div>
+    </div>
+
+    <div class="block">
+      <h2>Show on the map</h2>
+      <div class="filters" id="filters">
+        <label><input type="checkbox" value="WATERLOGGING" checked /> Waterlogging</label>
+        <label><input type="checkbox" value="OPEN_MANHOLE" checked /> Open manholes</label>
+        <label><input type="checkbox" value="ROAD_BLOCKAGE" checked /> Road blockage</label>
+        <label><input type="checkbox" value="OTHER" checked /> Other hazards</label>
+      </div>
+    </div>
+
+    <div class="block">
+      <h2>Find a safer route</h2>
+      <div class="card">
+        <div class="field">
+          <label for="route-start">From</label>
+          <input id="route-start" placeholder="Use my location or click the map" />
+        </div>
+        <div class="field">
+          <label for="route-end">To</label>
+          <input id="route-end" placeholder="Search a place in Mumbai" />
+        </div>
+        <div class="row">
+          <button class="btn ghost small" id="use-location" type="button">Use my location</button>
+          <button class="btn small" id="find-route" type="button">Find routes</button>
+        </div>
+        <div id="route-results" style="margin-top:12px"></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h2>Report a hazard</h2>
+      <button class="btn ghost" id="open-report" type="button">Report what you can see</button>
+    </div>
+
+    <div class="block">
+      <h2>Latest alerts</h2>
+      <div class="feed" id="alert-feed"><div class="empty">No alerts in the last few hours.</div></div>
+    </div>
+  </section>
+
+  <section class="map-wrap">
+    <div id="map"></div>
+    <button class="sos-button" id="sos-button" type="button">SOS<small>Emergency help</small></button>
+  </section>
+</main>
+
+<!-- Report hazard (FR-12, FR-13) -->
+<div class="modal-backdrop" id="report-modal">
+  <div class="modal">
+    <h2>Report a hazard</h2>
+    <p>Pin the spot on the map or use your location, then tell us what you see.</p>
+    <div id="report-notice" class="notice"></div>
+    <div class="field">
+      <label for="report-type">What is it?</label>
+      <select id="report-type">
+        <option value="WATERLOGGING">Waterlogging</option>
+        <option value="OPEN_MANHOLE">Open or missing manhole</option>
+        <option value="ROAD_BLOCKAGE">Road blocked</option>
+        <option value="DRAINAGE_ISSUE">Drain overflowing or choked</option>
+        <option value="FALLEN_OBJECT">Fallen tree, pole or debris</option>
+        <option value="OTHER">Something else</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="report-severity">How bad is it?</label>
+      <select id="report-severity">
+        <option value="LOW">Passable with care</option>
+        <option value="MEDIUM" selected>Slow going</option>
+        <option value="HIGH">Avoid this stretch</option>
+        <option value="CRITICAL">Dangerous right now</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="report-desc">Anything else we should know?</label>
+      <textarea id="report-desc" placeholder="Knee-deep water outside the station gate"></textarea>
+    </div>
+    <div class="field">
+      <label for="report-image">Photo (optional)</label>
+      <input id="report-image" type="file" accept="image/*" />
+    </div>
+    <div class="field">
+      <label>Location</label>
+      <div class="row">
+        <input id="report-coords" placeholder="Not set" readonly />
+        <button class="btn ghost small" id="report-locate" type="button">Use my location</button>
+      </div>
+    </div>
+    <div class="row">
+      <button class="btn ghost" id="report-cancel" type="button">Cancel</button>
+      <button class="btn" id="report-submit" type="button">Send report</button>
+    </div>
+  </div>
+</div>
+
+<!-- SOS (FR-21, FR-22) -->
+<div class="modal-backdrop" id="sos-modal">
+  <div class="modal">
+    <h2>Send an SOS?</h2>
+    <p>Your name, mobile number and current location go to the AquaGuard control room and to your emergency contacts.</p>
+    <div class="countdown" id="sos-countdown">5</div>
+    <div class="field">
+      <label for="sos-category">What is happening?</label>
+      <select id="sos-category">
+        <option value="FLOOD">Caught in rising water</option>
+        <option value="TRAPPED">Trapped, cannot move</option>
+        <option value="VEHICLE_STUCK">Vehicle stuck</option>
+        <option value="FALL_INTO_MANHOLE">Someone fell into an open manhole</option>
+        <option value="MEDICAL">Medical emergency</option>
+        <option value="OTHER" selected>Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="sos-message">Message (optional)</label>
+      <textarea id="sos-message" placeholder="Two of us near the bus stop, water up to the knees"></textarea>
+    </div>
+    <div class="row">
+      <button class="btn ghost" id="sos-cancel" type="button">Cancel</button>
+      <button class="btn danger" id="sos-send" type="button">Send now</button>
+    </div>
+    <p style="font-size:12px;margin-top:14px">
+      AquaGuard alerts the control room. For police, fire or ambulance call 100, 101 or 108 as well.
+    </p>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/map.js"></script>
+<script src="/js/citizen.js"></script>
+</body>
+</html>

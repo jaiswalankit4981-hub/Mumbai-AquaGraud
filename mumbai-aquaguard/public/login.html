@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sign in — Mumbai AquaGuard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1>Mumbai AquaGuard</h1>
+    <p>Live waterlogging, open manholes and safer routes across the city.</p>
+
+    <div class="tabs">
+      <button id="tab-login" class="active" type="button">Sign in</button>
+      <button id="tab-register" type="button">Create account</button>
+    </div>
+
+    <div id="notice" class="notice"></div>
+
+    <form id="login-form">
+      <div class="field">
+        <label for="login-email">Email</label>
+        <input id="login-email" type="email" autocomplete="email" required />
+      </div>
+      <div class="field">
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" autocomplete="current-password" required />
+      </div>
+      <button class="btn" type="submit">Sign in</button>
+    </form>
+
+    <form id="register-form" hidden>
+      <div class="field">
+        <label for="reg-name">Full name</label>
+        <input id="reg-name" required />
+      </div>
+      <div class="field">
+        <label for="reg-email">Email</label>
+        <input id="reg-email" type="email" required />
+      </div>
+      <div class="field">
+        <label for="reg-mobile">Mobile number</label>
+        <input id="reg-mobile" inputmode="tel" />
+      </div>
+      <div class="field">
+        <label for="reg-password">Password</label>
+        <input id="reg-password" type="password" minlength="6" required />
+      </div>
+      <button class="btn" type="submit">Create account</button>
+    </form>
+
+    <p style="font-size:13px;margin-top:16px">
+      Demo accounts — citizen: riya@example.com / citizen123 · control room: admin@aquaguard.in / admin123
+    </p>
+  </div>
+</div>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+</body>
+</html>

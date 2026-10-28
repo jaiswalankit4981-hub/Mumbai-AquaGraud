@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Control room — Mumbai AquaGuard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="/">Mumbai <span>AquaGuard</span></a>
+  <span id="conn" class="c-muted" style="font-size:13px"><i class="live-dot"></i>Live</span>
+  <nav>
+    <a href="/">Map</a>
+    <a href="/admin.html" aria-current="page">Control room</a>
+    <a href="#" id="nav-signout">Sign out</a>
+  </nav>
+</header>
+
+<main class="page">
+  <div class="tiles" id="tiles"></div>
+
+  <div class="split">
+    <section>
+      <h2 class="section-title">SOS alerts</h2>
+      <div class="card"><table><thead>
+        <tr><th>Person</th><th>Category</th><th>Raised</th><th>Status</th><th></th></tr>
+      </thead><tbody id="sos-rows"></tbody></table></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Citizen reports awaiting verification</h2>
+      <div class="card"><table><thead>
+        <tr><th>Hazard</th><th>Reported by</th><th>Severity</th><th></th></tr>
+      </thead><tbody id="report-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <div class="split">
+    <section>
+      <h2 class="section-title">Active incidents</h2>
+      <div class="card"><table><thead>
+        <tr><th>Type</th><th>Location</th><th>Severity</th><th>Since</th><th></th></tr>
+      </thead><tbody id="incident-rows"></tbody></table></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Sensor health</h2>
+      <div class="card"><table><thead>
+        <tr><th>Sensor</th><th>Location</th><th>Status</th><th>Battery</th><th>Last seen</th></tr>
+      </thead><tbody id="sensor-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <section>
+    <h2 class="section-title">Manholes</h2>
+    <div class="card" style="margin-bottom:22px"><table><thead>
+      <tr><th>ID</th><th>Location</th><th>Cover</th><th>Hidden by water</th><th></th></tr>
+    </thead><tbody id="manhole-rows"></tbody></table></div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Analytics</h2>
+    <div class="split">
+      <div class="card"><canvas id="chart-month" height="200"></canvas></div>
+      <div class="card"><canvas id="chart-locations" height="200"></canvas></div>
+    </div>
+    <div class="card"><canvas id="chart-rain" height="160"></canvas></div>
+  </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>
